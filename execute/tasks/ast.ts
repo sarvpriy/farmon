@@ -181,15 +181,9 @@ updateJSX / updateFunction
  *
  */
 function insertVariable(
-  {
-    code,
-    variableName,
-    value,
-    scope,
-    functionName,
-  }: TaskPayload<"insertVariable">,
+  { code, variableName, value, scope, functionName },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"insertVariable">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -473,9 +467,9 @@ function insertVariable(
  *
  */
 function updateVariable(
-  { code, variableName, newValue, line }: TaskPayload<"updateVariable">,
+  { code, variableName, newValue, line },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"updateVariable">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -686,9 +680,9 @@ function updateVariable(
  *
  */
 function deleteVariable(
-  { code, variableName, line }: TaskPayload<"deleteVariable">,
+  { code, variableName, line },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"deleteVariable">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -1673,15 +1667,9 @@ optimizeImports
  *
  */
 function insertJSX(
-  {
-    code,
-    componentName,
-    targetElement,
-    jsx,
-    position,
-  }: TaskPayload<"insertJSX">,
+  { code, componentName, targetElement, jsx, position },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"insertJSX">> {
+) {
   // const updatedCode = await formatCode(code);
   // return { success: true, updatedCode };
   // ----------------------------------------------------------
@@ -2022,9 +2010,9 @@ function insertJSX(
  *
  */
 function replaceJSX(
-  { code, componentName, targetElement, newJSX }: TaskPayload<"replaceJSX">,
+  { code, componentName, targetElement, newJSX },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"replaceJSX">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -2341,9 +2329,9 @@ function replaceJSX(
  *
  */
 function removeJSX(
-  { code, componentName, targetElement }: TaskPayload<"removeJSX">,
+  { code, componentName, targetElement },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"removeJSX">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -2660,9 +2648,9 @@ function removeJSX(
  *
  */
 function wrapJSX(
-  { code, componentName, targetElement, wrapperJSX }: TaskPayload<"wrapJSX">,
+  { code, componentName, targetElement, wrapperJSX },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"wrapJSX">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -2998,14 +2986,9 @@ function wrapJSX(
  *
  */
 function moveJSX(
-  {
-    code,
-    componentName,
-    sourceElement,
-    destinationElement,
-  }: TaskPayload<"moveJSX">,
+  { code, componentName, sourceElement, destinationElement },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"moveJSX">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -3502,9 +3485,9 @@ formatStyles()
  *
  */
 function removeImport(
-  { code, source, importName, importType }: TaskPayload<"removeImport">,
+  { code, source, importName, importType },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"removeImport">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -3757,9 +3740,9 @@ function removeImport(
  *
  */
 function ensureImport(
-  { code, source, importName, importType, alias }: TaskPayload<"ensureImport">,
+  { code, source, importName, importType, alias },
   context: ExecutionContext,
-): TaskResponse<TaskReturn<"ensureImport">> {
+) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse source code into AST
@@ -4085,10 +4068,7 @@ function ensureImport(
  * Updated optimized code.
  *
  */
-function optimizeImports(
-  { code }: TaskPayload<"optimizeImports">,
-  context: ExecutionContext,
-): TaskResponse<TaskReturn<"optimizeImports">> {
+function optimizeImports({ code }, context: ExecutionContext) {
   // ----------------------------------------------------------
   // STEP 1:
   // Parse code into AST
