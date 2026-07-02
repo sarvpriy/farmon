@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.base.json",
+
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "noEmit": false,
+    "noEmitOnError": false,
+    "sourceMap": true,
+    "declaration": false,
+    "types": ["node", "jest"],
+    "paths": {
+      "@/*": ["./*"],
+      "@schemas/*": ["./schemas/*"],
+      "@ui/*": ["./ui/src/*"]
+    }
+  },
+
+  "include": [
+    "bin/**/*",
+    "execute/**/*",
+    "providers/**/*",
+    "runtime/**/*",
+    "schemas/**/*",
+    "server/**/*",
+    "tests/**/*",
+    "workers/**/*",
+    "index.ts",
+    "global.d.ts"
+  ],
+
+  "exclude": ["ui", "node_modules", "dist", ".looma", "tests"]
+}

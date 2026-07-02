@@ -1,0 +1,17 @@
+export const SSE_EVENTS = {
+  // global events
+  HEALTH_CHANGED: "HEALTH_CHANGED",
+  SERVER_STARTED: "SERVER_STARTED",
+  SERVER_STOPPED: "SERVER_STOPPED",
+
+  // request specific events
+  STATUS: "STATUS",
+  TASK_STARTED: "TASK_STARTED",
+  TASK_COMPLETED: "TASK_COMPLETED",
+  ERROR: "ERROR",
+  PROGRESS: "PROGRESS",
+  TASK_FAILED: "TASK_FAILED",
+  PLAN_GENERATED: "PLAN_GENERATED",
+} as const;
+
+export type SSEEventType = (typeof SSE_EVENTS)[keyof typeof SSE_EVENTS];
