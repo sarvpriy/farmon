@@ -1,8 +1,8 @@
 {
   "name": "farmon",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.ts",
+  "description": "AI-powered React coding assistant that edits your codebase through deterministic code transformations.",
+  "main": "./dist/index.js",
   "scripts": {
     "dev": "NODE_ENV=development tsx server/run.ts",
     "build": "npm run build:server && npm run build:ui",
@@ -18,10 +18,20 @@
   "bin": {
     "farmon": "./dist/bin/farmon.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=22"
+  },
+  "author": "Sarvpriy Arya sarvpriy.arya@gmail.com",
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sarvpriy/farmon.git"
+  },
+  "homepage": "https://farmon.ai",
+  "bugs": {
+    "url": "https://github.com/sarvpriy/farmon/issues"
+  },
   "dependencies": {
     "@babel/parser": "^7.28.0",
     "@babel/traverse": "^7.28.0",
@@ -73,7 +83,32 @@
     "vite": "^8.0.12",
     "vite-tsconfig-paths": "^6.1.1"
   },
-  "_moduleAliases": {
-    "@": "."
-  }
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "react",
+    "reactjs",
+    "developer-tools",
+    "code-generation",
+    "code-transformation",
+    "ast",
+    "refactoring",
+    "automation",
+    "frontend",
+    "javascript",
+    "typescript",
+    "vite",
+    "ollama",
+    "agent",
+    "ai-agent",
+    "coding-assistant"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import "module-alias/register";
 import utils from "../../execute/helpers/general.js";
 import sse from "../../server/sse.js";
 import type { Action, AppContext } from "../../schemas/index.js";
@@ -21,14 +20,14 @@ import { LoomaError } from "../../server/error.js";
 
 export async function callLLM(
   prompt: string,
-  ctx: AppContext & Record<"caller", string>,
+  ctx: AppContext & Record<"caller", string>
 ): Promise<string> {
   if (process.env.CALL_LLM === "manual") {
     return await manualyCallLLM(
       {
         prompt,
       },
-      ctx,
+      ctx
     );
   }
 
@@ -53,7 +52,7 @@ export async function manualyCallLLM({ prompt }, ctx) {
     fs.writeFileSync(
       path.resolve(ctx.project.logsDir, "samples", "planner-prompt.sample"),
       prompt,
-      "utf8",
+      "utf8"
     );
     console.log(`Go to planner-prompt.sample to get latest prompt`);
   }
@@ -63,13 +62,13 @@ export async function manualyCallLLM({ prompt }, ctx) {
   // wait for llm output
   // put llm output in a file
   const name = await rl.question(
-    `Did you pasted LLM generated ${caller} response: `,
+    `Did you pasted LLM generated ${caller} response: `
   );
 
   // read llm output from a file
   const llmResponse = fs.readFileSync(
     path.resolve(ctx.project.logsDir, "samples", llmResposeFile),
-    "utf8",
+    "utf8"
   );
 
   console.log(`LLM Response: ${llmResponse}!`);

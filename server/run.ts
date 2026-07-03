@@ -4,8 +4,6 @@ import cors from "cors";
 // import { parseArgs } from "node:util";
 // import { createProxyMiddleware } from "http-proxy-middleware";
 
-import "module-alias/register";
-
 import history from "../execute/history/history-manager.js";
 import execute from "../execute/index.js";
 import sse from "../server/sse.js";
@@ -333,6 +331,6 @@ app.get("/health", async (req, res) => {
 
 app.listen(appContext.config.serverPort, () => {
   console.log(
-    `Farmon server running on http://localhost:${appContext.config.serverPort}`,
+    `Farmon server running on http://localhost:${appContext.config.serverPort}`
   );
 });

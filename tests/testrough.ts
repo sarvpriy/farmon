@@ -6,7 +6,6 @@ import parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from "@babel/generator";
 import t from "@babel/types";
-import "module-alias/register";
 
 import { ast, mutations, helpers, generators } from "@/execute/tasks/index.ts";
 import utils from "@/execute/helpers/general.ts";
@@ -914,7 +913,7 @@ async function testMutationTasks() {
           task: keyof typeof helpersTaskDetails;
           payload: unknown;
           taskOutputs: object;
-        },
+        }
       );
 
       console.log("Execution Result:");
@@ -1211,7 +1210,7 @@ function testUtilFunction() {
             "#root {\n  max-width: 1920px;\n  margin: 0 auto;\n  padding: 2rem;\n  text-align: center;\n}\n\n.logo {\n  height: 6em;\n  padding: 1.5em;\n  will-change: filter;\n  transition: filter 300ms;\n}\n.logo:hover {\n  filter: drop-shadow(0 0 2em #646cffaa);\n}\n.logo.react:hover {\n  filter: drop-shadow(0 0 2em #61dafbaa);\n}\n\n@keyframes logo-spin {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  a:nth-of-type(2) .logo {\n    animation: logo-spin infinite 20s linear;\n  }\n}\n\n.card {\n  padding: 2em;\n}\n\n.read-the-docs {\n  color: #888;\n}\n\nmain {\n  background-color: #2ecc71;\n}\n",
         },
       },
-    }),
+    })
   );
 
   const componentCode = `

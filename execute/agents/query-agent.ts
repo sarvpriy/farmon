@@ -1,4 +1,3 @@
-import "module-alias/register";
 import utils from "../../execute/helpers/general.js";
 import promptMaker from "../../execute/helpers/prompt-maker.js";
 
@@ -48,7 +47,7 @@ export default async function queryAgent(executionContext: ExecutionContext) {
     eventBus.emit(EVENTS.QUERY_AGENT_RESPONSE, { response });
 
     const decision = queryAgentResponseSchema.parse(
-      parsers.parseLLMJsonResponse(response),
+      parsers.parseLLMJsonResponse(response)
     );
 
     if (decision.status === "done") {
@@ -62,7 +61,7 @@ export default async function queryAgent(executionContext: ExecutionContext) {
         task: decision.task,
         payload: decision.payload,
       },
-      executionContext.appContext,
+      executionContext.appContext
     );
 
     eventBus.emit(EVENTS.TASK_COMPLETED, {
@@ -78,7 +77,7 @@ export default async function queryAgent(executionContext: ExecutionContext) {
 
   throw new LoomaError(
     ERROR_CODES.QUERY_AGENT_FAILED,
-    `Query Agent exceeded maximum iterations.`,
+    `Query Agent exceeded maximum iterations.`
   );
 }
 
@@ -93,7 +92,7 @@ export async function executeQueryTask({ task, payload }, appContext = {}) {
     {
       ...payload,
     },
-    appContext,
+    appContext
   );
 }
 

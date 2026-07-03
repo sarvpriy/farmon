@@ -29,3 +29,5 @@ llmresponse
 *.donotcommit
 .looma
 .farmon
+
+*.tgz
