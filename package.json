@@ -1,6 +1,6 @@
 {
   "name": "farmon",
-  "version": "0.2.0",
+  "version": "0.1.1",
   "description": "AI-powered React coding assistant that edits your codebase through deterministic code transformations.",
   "main": "./dist/index.js",
   "scripts": {
