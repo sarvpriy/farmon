@@ -63,24 +63,21 @@ npm install --save-dev farmon
 
 Create farmon.config.js
 
-```jsx
-/** @type {import("farmon").farmonConfig} */
+```js
+/** @type {import("farmon").FarmonConfig} */
 export default {
   llm: {
     provider: "openai-compatible", // "openai-compatible" | "ollama"
-    baseUrl: "http://localhost:1234/v1", // "http://localhost:1234/v1"
-    model: "qwen3.5-9b", //"qwen3:8b",
+    baseUrl: "http://localhost:1234/v1", // <api-url>
+    model: "qwen3.5-9b", // <model-name>
   },
   appUrl: "http://localhost:5173", // user's app url
   serverPort: 3001, // farmon server will run on this port
-  uiPort: 5174, // farmon iframe will run on this port
+  uiPort: 5174, // farmon chat box will run on this port
 
-  screenshot: {
-    enabled: true,
-  },
-  componentsDirectory: "src",
+  componentsDirectory: "src", // your component's directory
 
-  componentStructure: [".jsx", ".css", "index.ts"],
+  componentStructure: [".jsx", ".css", "index.ts"], // your project's component tructure
 
   componentIdAttribute: "data-farmon-id", // this is for component selection system
   selection: {
@@ -93,6 +90,7 @@ Start the Farmon server:
 
 ```bash
 farmon start
+# npx farmon start
 ```
 
 Then import the runtime into your application:
@@ -127,16 +125,6 @@ Farmon understands instructions such as:
 - Center this section.
 - Rename this CSS class.
 - Move this component into the `components/layout` directory.
-
-## Roadmap
-
-Current priorities include:
-
-- Improved planning and reasoning
-- Better project understanding
-- Richer React support
-- Enhanced undo/redo
-- Expanded mutation library
 
 ---
 

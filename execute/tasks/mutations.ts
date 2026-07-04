@@ -204,7 +204,7 @@ insertJSX
 */
 function createFile(
   { filePath, content = "" }: TaskPayload<"createFile">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"createFile">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -405,7 +405,7 @@ deleteFile
 */
 function deleteFile(
   { filePath }: TaskPayload<"deleteFile">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"deleteFile">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -639,7 +639,7 @@ optimizeImports
 */
 function renameFile(
   { oldFilePath, newFilePath }: TaskPayload<"renameFile">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"renameFile">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -900,7 +900,7 @@ optimizeImports
 */
 function moveFile(
   { fileName, sourcePath, destinationPath }: TaskPayload<"moveFile">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"moveFile">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -973,7 +973,7 @@ function moveFile(
   // ----------------------------------------------------------
 
   const destinationFileExists = fs.existsSync(
-    path.join(destinationPath, fileName),
+    path.join(destinationPath, fileName)
   );
 
   if (destinationFileExists) {
@@ -1164,7 +1164,7 @@ createComponent
  */
 function createDirectory(
   { directoryPath }: TaskPayload<"createDirectory">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"createDirectory">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -1442,7 +1442,7 @@ function createDirectory(
  */
 function deleteDirectory(
   { directoryPath }: TaskPayload<"deleteDirectory">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"deleteDirectory">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -1485,7 +1485,7 @@ function deleteDirectory(
 
   const absoluteTrashPath = path.join(
     trashDir,
-    `${Date.now()}_${directoryName}`,
+    `${Date.now()}_${directoryName}`
   );
 
   // ----------------------------------------------------------
@@ -1510,7 +1510,7 @@ function deleteDirectory(
 
   const relativeTrashPath = path.relative(
     appContext.project.root,
-    absoluteTrashPath,
+    absoluteTrashPath
   );
 
   // ----------------------------------------------------------
@@ -1708,7 +1708,7 @@ function deleteDirectory(
  */
 function renameDirectory(
   { oldDirectoryPath, newDirectoryPath }: TaskPayload<"renameDirectory">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"renameDirectory">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -1985,7 +1985,7 @@ function renameDirectory(
  */
 function moveDirectory(
   { sourcePath, destinationPath }: TaskPayload<"moveDirectory">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"moveDirectory">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -2198,7 +2198,7 @@ function createComponent(
     componentCode,
     parentDirectory,
   }: TaskPayload<"createComponent">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"createComponent">> {
   // : TaskPayload<"createComponent">): TaskReturn<"createComponent">
   // ----------------------------------------------------------
@@ -2208,11 +2208,20 @@ function createComponent(
 
   const componentDirectoryPath = path.join(parentDirectory, componentName);
 
-  const jsxFilePath = path.join(componentDirectoryPath, `${componentName}.jsx`);
+  const jsxFilePath = path.join(
+    componentDirectoryPath,
+    `${componentName}${appContext.config.componentStructure[0]}`
+  );
 
-  const cssFilePath = path.join(componentDirectoryPath, `${componentName}.css`);
+  const cssFilePath = path.join(
+    componentDirectoryPath,
+    `${componentName}${appContext.config.componentStructure[1]}`
+  );
 
-  const indexFilePath = path.join(componentDirectoryPath, "index.ts");
+  const indexFilePath = path.join(
+    componentDirectoryPath,
+    appContext.config.componentStructure[2]
+  );
 
   // ----------------------------------------------------------
   // STEP 2:
@@ -2223,7 +2232,7 @@ function createComponent(
     {
       directoryPath: componentDirectoryPath,
     },
-    appContext,
+    appContext
   );
 
   if (!createDirectoryResult.success) {
@@ -2243,7 +2252,7 @@ function createComponent(
   const cssClassname = componentName.toLowerCase();
   const code =
     componentCode ??
-    `import "./${componentName}.css";
+    `import "./${componentName}${appContext.config.componentStructure[1]}";
 
 function ${componentName}() {
   return (
@@ -2268,7 +2277,7 @@ export default ${componentName};
       filePath: jsxFilePath,
       content: formatedCode,
     },
-    appContext,
+    appContext
   );
 
   if (!jsxResult.success) {
@@ -2285,7 +2294,7 @@ export default ${componentName};
       filePath: cssFilePath,
       content: `.${cssClassname} {\n\n}`,
     },
-    appContext,
+    appContext
   );
 
   if (!cssResult.success) {
@@ -2302,7 +2311,7 @@ export default ${componentName};
       filePath: indexFilePath,
       content: `export { default } from "./${componentName}";\n`,
     },
-    appContext,
+    appContext
   );
 
   if (!indexResult.success) {
@@ -2478,7 +2487,7 @@ newComponentCode,
 */
 function updateComponent(
   { componentPath, componentCode }: TaskPayload<"updateComponent">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"updateComponent">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -2670,7 +2679,7 @@ optimizeImports
 */
 function deleteComponent(
   { componentName, parentDirectory }: TaskPayload<"deleteComponent">,
-  appContext?: AppContext,
+  appContext?: AppContext
 ): TaskResponse<TaskReturn<"deleteComponent">> {
   // ----------------------------------------------------------
   // Derive the absolute component directory path from
@@ -2719,7 +2728,7 @@ function deleteComponent(
     {
       directoryPath: componentDirectoryPath,
     },
-    appContext,
+    appContext
   );
 
   if (!result.success) {
@@ -2901,7 +2910,7 @@ function moveComponent(
     createDestination = true,
     overwrite = false,
   }: TaskPayload<"moveComponent">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"moveComponent">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -2925,7 +2934,7 @@ function moveComponent(
   if (!fs.existsSync(absoluteSourcePath)) {
     throw new LoomaError(
       ERROR_CODES.COMPONENT_NOT_FOUND,
-      `Component does not exist: ${absoluteSourcePath}`,
+      `Component does not exist: ${absoluteSourcePath}`
     );
   }
 
@@ -2939,7 +2948,7 @@ function moveComponent(
   if (!sourceStats.isDirectory()) {
     throw new LoomaError(
       ERROR_CODES.INVALID_PATH,
-      `Component path is not a directory: ${absoluteSourcePath}`,
+      `Component path is not a directory: ${absoluteSourcePath}`
     );
   }
 
@@ -2956,7 +2965,7 @@ function moveComponent(
     if (!createDestination) {
       throw new LoomaError(
         ERROR_CODES.DIRECTORY_NOT_FOUND,
-        `Destination directory does not exist: ${absoluteDestinationPath}`,
+        `Destination directory does not exist: ${absoluteDestinationPath}`
       );
     }
 
@@ -2987,7 +2996,7 @@ function moveComponent(
 
   const finalDestinationPath = path.join(
     absoluteDestinationPath,
-    componentFolderName,
+    componentFolderName
   );
 
   // ----------------------------------------------------------
@@ -3013,7 +3022,7 @@ function moveComponent(
     else {
       throw new LoomaError(
         ERROR_CODES.COMPONENT_ALREADY_EXISTS,
-        `Component already exists at destination: ${finalDestinationPath}`,
+        `Component already exists at destination: ${finalDestinationPath}`
       );
     }
   }
@@ -3203,7 +3212,7 @@ function renameComponent(
     newComponentName,
     updateComponentCode = true,
   }: TaskPayload<"renameComponent">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"renameComponent">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -3220,7 +3229,7 @@ function renameComponent(
   if (!fs.existsSync(absoluteComponentPath)) {
     throw new LoomaError(
       ERROR_CODES.COMPONENT_NOT_FOUND,
-      `Component does not exist: ${absoluteComponentPath}`,
+      `Component does not exist: ${absoluteComponentPath}`
     );
   }
 
@@ -3242,12 +3251,12 @@ function renameComponent(
 
   const oldJsxPath = path.join(
     absoluteComponentPath,
-    `${oldComponentName}.jsx`,
+    `${oldComponentName}${appContext.config.componentStructure[0]}`
   );
 
   const oldCssPath = path.join(
     absoluteComponentPath,
-    `${oldComponentName}.css`,
+    `${oldComponentName}${appContext.config.componentStructure[1]}`
   );
 
   // ----------------------------------------------------------
@@ -3267,7 +3276,7 @@ function renameComponent(
   if (fs.existsSync(newComponentPath)) {
     throw new LoomaError(
       ERROR_CODES.COMPONENT_ALREADY_EXISTS,
-      `Component already exists: ${newComponentPath}`,
+      `Component already exists: ${newComponentPath}`
     );
   }
 
@@ -3283,9 +3292,15 @@ function renameComponent(
   // Build new file paths
   // ----------------------------------------------------------
 
-  const newJsxPath = path.join(newComponentPath, `${newComponentName}.jsx`);
+  const newJsxPath = path.join(
+    newComponentPath,
+    `${newComponentName}${appContext.config.componentStructure[0]}`
+  );
 
-  const newCssPath = path.join(newComponentPath, `${newComponentName}.css`);
+  const newCssPath = path.join(
+    newComponentPath,
+    `${newComponentName}${appContext.config.componentStructure[1]}`
+  );
 
   // ----------------------------------------------------------
   // STEP 9:
@@ -3294,7 +3309,7 @@ function renameComponent(
 
   const movedOldJsxPath = path.join(
     newComponentPath,
-    `${oldComponentName}.jsx`,
+    `${oldComponentName}${appContext.config.componentStructure[0]}`
   );
 
   if (fs.existsSync(movedOldJsxPath)) {
@@ -3308,7 +3323,7 @@ function renameComponent(
 
   const movedOldCssPath = path.join(
     newComponentPath,
-    `${oldComponentName}.css`,
+    `${oldComponentName}${appContext.config.componentStructure[1]}`
   );
 
   if (fs.existsSync(movedOldCssPath)) {
@@ -3558,7 +3573,7 @@ function extractComponent(
     componentsDirectory,
     includeCss = true,
   }: TaskPayload<"extractComponent">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"extractComponent">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -3575,7 +3590,7 @@ function extractComponent(
   if (!fs.existsSync(absoluteParentPath)) {
     throw new LoomaError(
       ERROR_CODES.COMPONENT_NOT_FOUND,
-      `Parent component does not exist: ${absoluteParentPath}`,
+      `Parent component does not exist: ${absoluteParentPath}`
     );
   }
 
@@ -3593,14 +3608,17 @@ function extractComponent(
 
   const componentDirectoryPath = path.join(
     path.resolve(componentsDirectory),
-    newComponentName,
+    newComponentName
   );
 
   fs.mkdirSync(componentDirectoryPath, {
     recursive: true,
   });
 
-  const componentIndexPath = path.join(componentDirectoryPath, "index.ts");
+  const componentIndexPath = path.join(
+    componentDirectoryPath,
+    appContext.config.componentStructure[2]
+  );
   // ----------------------------------------------------------
   // STEP 5:
   // Build new component JSX path
@@ -3608,7 +3626,7 @@ function extractComponent(
 
   const componentJsxPath = path.join(
     componentDirectoryPath,
-    `${newComponentName}.jsx`,
+    `${newComponentName}${appContext.config.componentStructure[0]}`
   );
 
   // ----------------------------------------------------------
@@ -3618,7 +3636,7 @@ function extractComponent(
 
   const componentCssPath = path.join(
     componentDirectoryPath,
-    `${newComponentName}.css`,
+    `${newComponentName}${appContext.config.componentStructure[1]}`
   );
 
   // ----------------------------------------------------------
@@ -3627,7 +3645,7 @@ function extractComponent(
   // ----------------------------------------------------------
 
   const componentCode = `
-import "./${newComponentName}.css";
+import "./${newComponentName}${appContext.config.componentStructure[1]}";
 
 function ${newComponentName}() {
   return (
@@ -3845,7 +3863,7 @@ function updateStyles(
     styles = {},
     createIfMissing = true,
   }: TaskPayload<"updateStyles">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"updateStyles">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -3900,7 +3918,7 @@ function updateStyles(
       const caseConvertedProperty = camelToKebab(property);
 
       const existingDeclaration = rule.nodes.find(
-        (node) => node.type === "decl" && node.prop === caseConvertedProperty,
+        (node) => node.type === "decl" && node.prop === caseConvertedProperty
       );
 
       // ------------------------------------------------------
@@ -4095,7 +4113,7 @@ function camelToKebab(str) {
  */
 function removeStyles(
   { cssPath, target, removeAll = false }: TaskPayload<"removeStyles">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"removeStyles">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -4411,7 +4429,7 @@ function renameCssClass(
     oldClassName,
     newClassName,
   }: TaskPayload<"renameCssClass">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"renameCssClass">> {
   // ----------------------------------------------------------
   // Track mutation results
@@ -4467,7 +4485,7 @@ function renameCssClass(
 
       const updatedSelector = selector.replace(
         new RegExp(`\\.${oldClassName}(?![a-zA-Z0-9_-])`, "g"),
-        `.${newClassName}`,
+        `.${newClassName}`
       );
 
       // ----------------------------------------------------
@@ -4810,7 +4828,7 @@ function insertVariable(
     scope,
     functionName,
   }: TaskPayload<"insertVariable">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"insertVariable">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -5118,7 +5136,7 @@ function insertVariable(
  */
 function updateVariable(
   { filePath, variableName, newValue }: TaskPayload<"updateVariable">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"updateVariable">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -5352,7 +5370,7 @@ function updateVariable(
  */
 function deleteVariable(
   { filePath, variableName }: TaskPayload<"deleteVariable">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"deleteVariable">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -5422,7 +5440,7 @@ function deleteVariable(
           // ------------------------------------------------
 
           return false;
-        },
+        }
       );
 
       // ------------------------------------------------------
@@ -5677,7 +5695,7 @@ function createFunction({
   const functionDeclaration = t.functionDeclaration(
     t.identifier(functionName),
     functionParams,
-    t.blockStatement(parsedBody.program.body),
+    t.blockStatement(parsedBody.program.body)
   );
 
   // ==========================================================
@@ -6366,7 +6384,7 @@ function insertJSX(
     jsx,
     position,
   }: TaskPayload<"insertJSX">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"insertJSX">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -6471,12 +6489,12 @@ function insertJSX(
           if (position === "first") {
             jsxPath.node.children.unshift(
               t.jsxExpressionContainer(jsxNode),
-              t.jsxText("\n"),
+              t.jsxText("\n")
             );
           } else {
             jsxPath.node.children.push(
               t.jsxText("\n"),
-              t.jsxExpressionContainer(jsxNode),
+              t.jsxExpressionContainer(jsxNode)
             );
           }
 
@@ -6730,7 +6748,7 @@ function insertJSX(
  */
 function replaceJSX(
   { filePath, componentName, targetElement, newJSX }: TaskPayload<"replaceJSX">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"replaceJSX">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -7066,7 +7084,7 @@ function replaceJSX(
  */
 function removeJSX(
   { filePath, componentName, targetElement }: TaskPayload<"removeJSX">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"removeJSX">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -7412,7 +7430,7 @@ function wrapJSX(
     targetElement,
     wrapperJSX,
   }: TaskPayload<"wrapJSX">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"wrapJSX">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -7450,7 +7468,7 @@ function wrapJSX(
   if (!t.isJSXElement(wrapperNode)) {
     throw new LoomaError(
       ERROR_CODES.INVALID_JSX,
-      "wrapperJSX must be a valid JSX element",
+      "wrapperJSX must be a valid JSX element"
     );
   }
 
@@ -7777,7 +7795,7 @@ function moveJSX(
     sourceElement,
     destinationElement,
   }: TaskPayload<"moveJSX">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"moveJSX">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -8298,7 +8316,7 @@ formatStyles()
  */
 function removeImport(
   { filePath, source, importName, importType }: TaskPayload<"removeImport">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"removeImport">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -8363,7 +8381,7 @@ function removeImport(
         // ----------------------------------------------------
 
         specifiers = specifiers.filter(
-          (specifier) => !t.isImportDefaultSpecifier(specifier),
+          (specifier) => !t.isImportDefaultSpecifier(specifier)
         );
       }
 
@@ -8408,7 +8426,7 @@ function removeImport(
         // ----------------------------------------------------
 
         specifiers = specifiers.filter(
-          (specifier) => !t.isImportNamespaceSpecifier(specifier),
+          (specifier) => !t.isImportNamespaceSpecifier(specifier)
         );
       }
 
@@ -8580,7 +8598,7 @@ function ensureImport(
     importType,
     alias,
   }: TaskPayload<"ensureImport">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"ensureImport">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -8665,12 +8683,12 @@ function ensureImport(
         // =========================
         if (importType === "default") {
           const hasDefault = specifiers.some((s) =>
-            t.isImportDefaultSpecifier(s),
+            t.isImportDefaultSpecifier(s)
           );
 
           if (!hasDefault) {
             specifiers.unshift(
-              t.importDefaultSpecifier(t.identifier(alias || importName)),
+              t.importDefaultSpecifier(t.identifier(alias || importName))
             );
 
             modified = true;
@@ -8684,7 +8702,7 @@ function ensureImport(
         if (importType === "named") {
           // namespace import already covers all
           const hasNamespace = specifiers.some((s) =>
-            t.isImportNamespaceSpecifier(s),
+            t.isImportNamespaceSpecifier(s)
           );
 
           if (hasNamespace) return;
@@ -8693,15 +8711,15 @@ function ensureImport(
             (s) =>
               t.isImportSpecifier(s) &&
               t.isIdentifier(s.imported) &&
-              s.imported.name === importName,
+              s.imported.name === importName
           );
 
           if (!hasNamed) {
             specifiers.push(
               t.importSpecifier(
                 t.identifier(alias || importName),
-                t.identifier(importName),
-              ),
+                t.identifier(importName)
+              )
             );
 
             modified = true;
@@ -8714,7 +8732,7 @@ function ensureImport(
         // =========================
         if (importType === "namespace") {
           const hasNamespace = specifiers.some((s) =>
-            t.isImportNamespaceSpecifier(s),
+            t.isImportNamespaceSpecifier(s)
           );
 
           if (!hasNamespace) {
@@ -8762,7 +8780,7 @@ function ensureImport(
   if (importType === "named") {
     specifier = t.importSpecifier(
       t.identifier(alias || importName),
-      t.identifier(importName),
+      t.identifier(importName)
     );
   }
 
@@ -8783,7 +8801,7 @@ function ensureImport(
 
   const importDeclaration = t.importDeclaration(
     [specifier],
-    t.stringLiteral(source),
+    t.stringLiteral(source)
   );
 
   // ----------------------------------------------------------
@@ -8927,7 +8945,7 @@ function ensureImport(
  */
 function optimizeImports(
   { filePath }: TaskPayload<"optimizeImports">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"optimizeImports">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -9116,7 +9134,7 @@ function optimizeImports(
 
 function updateImportSource(
   { filePath, oldSource, newSource }: TaskPayload<"updateImportSource">,
-  appContext: AppContext,
+  appContext: AppContext
 ): TaskResponse<TaskReturn<"updateImportSource">> {
   // ----------------------------------------------------------
   // STEP 1:

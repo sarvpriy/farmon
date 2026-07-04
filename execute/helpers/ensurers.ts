@@ -123,14 +123,14 @@ import { LoomaError } from "../../server/error.js";
  */
 function ensureLibrary(
   { libraryName, version = "v1.0.0" }: TaskPayload<"ensureLibrary">,
-  context: AppContext,
+  context: AppContext
 ): { success: boolean } | { success: boolean; message: string } {
   if (
     !Object.prototype.hasOwnProperty.call(
       healpers.getProjectDependencies({
         projectRoot: context.project.root,
       }).allPackages,
-      libraryName,
+      libraryName
     )
   ) {
     const message = `Package ${libraryName} in not installed. Please install it`;
@@ -384,7 +384,7 @@ createComponent
 */
 function ensureStyleFile(
   { componentName }: TaskPayload<"ensureStyleFile">,
-  context: ExecutionContext,
+  context: ExecutionContext
 ): TaskResponse<TaskReturn<"ensureStyleFile">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -395,7 +395,7 @@ function ensureStyleFile(
     {
       componentName,
     },
-    context.appContext,
+    context.appContext
   );
   const absoluteComponentPath = foundComponent.componentPath;
 
@@ -408,7 +408,10 @@ function ensureStyleFile(
   // Header/Header.css
   // ----------------------------------------------------------
 
-  const cssPath = path.join(absoluteComponentPath, `${componentName}.css`);
+  const cssPath = path.join(
+    absoluteComponentPath,
+    `${componentName}${context.appContext.config.componentStructure[1]}`
+  );
 
   // ----------------------------------------------------------
   // STEP 3:
@@ -620,7 +623,7 @@ function normalizeComponent(
     ensureIndex = true,
     normalizeExports = true,
   }: TaskPayload<"normalizeComponent">,
-  context: ExecutionContext,
+  context: ExecutionContext
 ): TaskResponse<TaskReturn<"normalizeComponent">> {
   const COMPONENT_STRUCTURE = context.appContext.config.componentStructure;
   // ----------------------------------------------------------
@@ -647,7 +650,7 @@ function normalizeComponent(
           ensureIndex: true,
           normalizeExports: true,
         },
-      },
+      }
     );
   }
 
@@ -672,12 +675,12 @@ function normalizeComponent(
 
   const jsxPath = path.join(
     absoluteComponentPath,
-    `${componentName}${COMPONENT_STRUCTURE[0]}`,
+    `${componentName}${COMPONENT_STRUCTURE[0]}`
   );
 
   const cssPath = path.join(
     absoluteComponentPath,
-    `${componentName}${COMPONENT_STRUCTURE[1]}`,
+    `${componentName}${COMPONENT_STRUCTURE[1]}`
   );
 
   const indexPath = path.join(absoluteComponentPath, COMPONENT_STRUCTURE[2]);
@@ -693,7 +696,7 @@ function normalizeComponent(
     // --------------------------------------------------------
 
     const jsxTemplate = `
-import "./${componentName}.css";
+import "./${componentName}${COMPONENT_STRUCTURE[1]}";
 
 function ${componentName}() {
  return (
@@ -781,7 +784,7 @@ export { default } from "./${componentName}";
 
     componentCode = componentCode.replace(
       /export\s+default\s+[A-Za-z0-9_]+;/g,
-      "",
+      ""
     );
 
     // --------------------------------------------------------
@@ -810,7 +813,7 @@ export default ${componentName};
   if (componentDeclarationRegex.test(componentCode)) {
     componentCode = componentCode.replace(
       componentDeclarationRegex,
-      `function ${componentName}(`,
+      `function ${componentName}(`
     );
 
     repairedItems.push("Normalized component declaration");

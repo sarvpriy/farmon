@@ -548,7 +548,7 @@ generateCode
 */
 function findComponentInJsx(
   { ast, componentName }: TaskPayload<any>,
-  context: AppContext,
+  context: AppContext
 ): TaskResponse<TaskReturn<any>> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -1169,7 +1169,7 @@ function findComponentDirectory(
     caseSensitive = false,
     returnFirst = true,
   }: TaskPayload<"findComponentDirectory">,
-  context: AppContext,
+  context: AppContext
 ): TaskResponse<TaskReturn<"findComponentDirectory">> {
   // ----------------------------------------------------------
   // STEP 1:
@@ -1193,7 +1193,7 @@ function findComponentDirectory(
           caseSensitive: false,
           returnFirst: true,
         },
-      },
+      }
     );
   }
 
@@ -1266,13 +1266,19 @@ function findComponentDirectory(
         // Build potential JSX file path
         // ----------------------------------------------------
 
-        const jsxPath = path.join(entryPath, `${entry.name}.jsx`);
+        const jsxPath = path.join(
+          entryPath,
+          `${entry.name}${context.config.componentStructure[0]}`
+        );
 
         // ----------------------------------------------------
         // Build potential CSS file path
         // ----------------------------------------------------
 
-        const cssPath = path.join(entryPath, `${entry.name}.css`);
+        const cssPath = path.join(
+          entryPath,
+          `${entry.name}${context.config.componentStructure[1]}`
+        );
 
         // ----------------------------------------------------
         // Store component metadata
@@ -1322,7 +1328,7 @@ function findComponentDirectory(
   if (!foundComponent) {
     throw new LoomaError(
       ERROR_CODES.COMPONENT_NOT_FOUND,
-      `Component ${componentName} not found`,
+      `Component ${componentName} not found`
     );
   }
 
