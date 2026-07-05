@@ -183,7 +183,7 @@ const useLoomaStore = create(
 
     uiSnapshot: null,
 
-    selectedComponentId: null,
+    selectedComponentId: "cmp_main",
 
     command: "",
 

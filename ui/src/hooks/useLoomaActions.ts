@@ -47,9 +47,10 @@ export function useLoomaActions() {
       validationError = "Looma Server is not available.";
     } else if (!health.llm) {
       validationError = "LLM is not available.";
-    } else if (!selectedComponentId) {
-      validationError = "Please select a component.";
     }
+    // else if (!selectedComponentId) {
+    //   validationError = "Please select a component.";
+    // }
 
     if (validationError) {
       addAgentMessage(validationError);

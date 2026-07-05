@@ -51,7 +51,7 @@ import { useHealth } from "../../hooks/useHealth.ts";
 // });
 
 export default function LoomaPanel() {
-  useHealth();
+  // useHealth();
   useLoomaMessages();
   useSSE({ defaultStatus: "Online..." });
 

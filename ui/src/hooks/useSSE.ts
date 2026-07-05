@@ -9,6 +9,7 @@ export function useSSE({ defaultStatus }: { defaultStatus: any }) {
 
   const setCurrentTask = useLoomaStore((state) => state.setCurrentTask);
   const addExecutionEvent = useLoomaStore((state) => state.addExecutionEvent);
+  const setHealth = useLoomaStore((state) => state.setHealth);
 
   useEffect(() => {
     const source = new EventSource("/events");
@@ -16,6 +17,14 @@ export function useSSE({ defaultStatus }: { defaultStatus: any }) {
     console.log("Listening to sse events...");
 
     // Startup panel: SSE connection established.
+
+    // Connected
+    source.onopen = () => {
+      setHealth({
+        server: true,
+        llm: true,
+      });
+    };
 
     source.onmessage = (e) => {
       // {"type":"ERROR","message":"LLM's response in invalid JSON"}
@@ -85,8 +94,16 @@ export function useSSE({ defaultStatus }: { defaultStatus: any }) {
       }
     };
 
+    // Connection lost
+    source.onerror = () => {
+      setHealth({
+        server: false,
+        llm: false,
+      });
+    };
+
     return () => source.close();
-  }, [addExecutionEvent, setCurrentTask]);
+  }, [addExecutionEvent, setCurrentTask, setHealth]);
 
   return events;
 }

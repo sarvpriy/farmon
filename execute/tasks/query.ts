@@ -47,10 +47,11 @@ async function readFile({ filePath }: { filePath: string }) {
 /**
  * Description: Reads package.json.
  */
-async function readPackageJson({ projectRoot }) {
+async function readPackageJson({ projectRoot }, context: AppContext) {
   sse.emitInfo("Reading package.json...");
+  console.log("projectRoot", projectRoot);
 
-  const filePath = path.join(projectRoot, "package.json");
+  const filePath = path.join(context.project.root, "package.json");
 
   const content = await fs.promises.readFile(filePath, "utf8");
 
@@ -63,12 +64,12 @@ async function readPackageJson({ projectRoot }) {
 /**
  * Description: Reads README.md.
  */
-async function readReadme({ projectRoot }) {
+async function readReadme({ projectRoot }, context: AppContext) {
   sse.emitInfo("Reading README...");
   const candidates = ["README.md", "readme.md", "Readme.md"];
 
   const fileName = candidates.find((name) =>
-    fs.existsSync(path.join(projectRoot, name)),
+    fs.existsSync(path.join(context.project.root, name)),
   );
 
   if (!fileName) {

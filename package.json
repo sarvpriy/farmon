@@ -84,7 +84,8 @@
     "vite-tsconfig-paths": "^6.1.1"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./vite": "./dist/instrumentation/vite.js"
   },
   "keywords": [
     "ai",

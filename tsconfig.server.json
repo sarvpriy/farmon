@@ -23,7 +23,7 @@
     "runtime/**/*",
     "schemas/**/*",
     "server/**/*",
-    // "tests/**/*",
+    "instrumentation/**/*",
     "workers/**/*",
     "index.ts",
     "global.d.ts"

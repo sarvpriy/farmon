@@ -24,7 +24,7 @@ async function request(executionContext: ExecutionContext) {
   // -------------------------------------------------------------------------
   const { category } = await agents.classifyInstruction(
     command,
-    executionContext.appContext,
+    executionContext,
   );
 
   // -------------------------------------------------------------------------

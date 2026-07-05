@@ -540,7 +540,7 @@ generateCode
 
 //   // ----------------------------------------------------------
 //   // STEP 2:
-//   // Traverse all import declarations
+//   // .default all import declarations
 //   // ----------------------------------------------------------
 
 //   traverse.default(ast, {
