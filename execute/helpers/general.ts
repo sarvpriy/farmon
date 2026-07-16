@@ -2607,7 +2607,7 @@ function resolveStyleDependencies({
   if (!fs.existsSync(absoluteCssPath)) {
     throw new LoomaError(
       ERROR_CODES.FILE_NOT_FOUND,
-      `CSS file does not exist: ${absoluteCssPath}`,
+      `CSS file does not exist: ${absoluteCssPath}`
     );
   }
 
@@ -2661,7 +2661,7 @@ function resolveStyleDependencies({
     const variablesFile = (availableDependencyFiles as string[]).find(
       (file) => {
         return file.includes("variables.css");
-      },
+      }
     );
 
     // --------------------------------------------------------
@@ -2682,7 +2682,7 @@ function resolveStyleDependencies({
 
         const relativeImportPath = path.relative(
           path.dirname(absoluteCssPath),
-          variablesFile,
+          variablesFile
         );
 
         // ----------------------------------------------------
@@ -2740,7 +2740,7 @@ function resolveStyleDependencies({
     const animationsFile = (availableDependencyFiles as string[]).find(
       (file) => {
         return file.includes("animations.css");
-      },
+      }
     );
 
     // --------------------------------------------------------
@@ -2761,7 +2761,7 @@ function resolveStyleDependencies({
 
         const relativeImportPath = path.relative(
           path.dirname(absoluteCssPath),
-          animationsFile,
+          animationsFile
         );
 
         // ----------------------------------------------------
@@ -3016,7 +3016,7 @@ function matchesSelector({ openingElement, selector }) {
       .filter(Boolean);
 
     const hasAllClasses = classes.every((className) =>
-      classNames.includes(className),
+      classNames.includes(className)
     );
 
     if (!hasAllClasses) {
@@ -3171,12 +3171,12 @@ async function generateTasksDocs() {
 function formatCode(code: string) {
   try {
     return createSyncFn(
-      path.join(getInitializationContext().workersDir, "prettier.js"),
+      path.join(getInitializationContext().workersDir, "prettier.js")
     )(code);
   } catch (error) {
     throw new LoomaError(
       ERROR_CODES.VALIDATION_FAILED,
-      `Syntax validation failed:\n${error.message}`,
+      `Syntax validation failed:\n${error.message}`
     );
   }
 }
@@ -3239,7 +3239,7 @@ function resolveTaskReferences({
 
   if (Array.isArray(value)) {
     return value.map((item) =>
-      resolveTaskReferences({ value: item, taskOutputs }),
+      resolveTaskReferences({ value: item, taskOutputs })
     );
   }
 
@@ -3285,7 +3285,7 @@ function resolveTaskReferences({
           {
             taskOutputs,
             source,
-          },
+          }
         );
       }
 
@@ -3313,7 +3313,7 @@ function resolveTaskReferences({
             `Unable to resolve path "${path}" from task "${source}"`,
             {
               task: resolveTaskReferences.name,
-            },
+            }
           );
         }
 
@@ -3337,7 +3337,7 @@ function resolveTaskReferences({
       Object.entries(value).map(([key, val]) => [
         key,
         resolveTaskReferences({ value: val, taskOutputs }),
-      ]),
+      ])
     );
   }
 
@@ -3600,7 +3600,8 @@ function createComponentRegistry({
       // Extract component name
       // ------------------------------------------------------
 
-      const componentName = path.basename(entry.name, path.extname(entry.name));
+      const componentType = path.extname(entry.name);
+      const componentName = path.basename(entry.name, componentType);
 
       // ------------------------------------------------------
       // Build component id
@@ -3613,8 +3614,8 @@ function createComponentRegistry({
       // --------------------------------------------------------
 
       const code = fs.readFileSync(
-        path.join(currentDirectory, `${componentName}.jsx`),
-        "utf8",
+        path.join(currentDirectory, entry.name),
+        "utf8"
       );
 
       // --------------------------------------------------------
@@ -3623,7 +3624,7 @@ function createComponentRegistry({
 
       const ast = parse(code, {
         sourceType: "module",
-        plugins: ["jsx"],
+        plugins: [componentType === ".tsx" ? "typescript" : "jsx"],
       });
 
       // --------------------------------------------------------
@@ -3848,7 +3849,7 @@ function createComponentRegistry({
           // --------------------------------------------------
 
           const childComponent: any = Object.values(registry).find(
-            (entry: any) => entry.componentName === childName,
+            (entry: any) => entry.componentName === childName
           );
 
           if (!childComponent) {
@@ -3967,7 +3968,7 @@ function getProjectDependencies({
   if (!fs.existsSync(packageJsonPath)) {
     throw new LoomaError(
       ERROR_CODES.FILE_NOT_FOUND,
-      `package.json not found at: ${packageJsonPath}`,
+      `package.json not found at: ${packageJsonPath}`
     );
   }
 
@@ -3990,7 +3991,7 @@ function getProjectDependencies({
   } catch (error) {
     throw new LoomaError(
       ERROR_CODES.INTERNAL_ERROR,
-      `Invalid package.json format`,
+      `Invalid package.json format`
     );
   }
 

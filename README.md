@@ -8,32 +8,6 @@ Unlike chat-based assistants that generate code snippets, Farmon analyzes your p
 
 ---
 
-## Philosophy
-
-Every week, a new LLM claims higher benchmark scores and better reasoning capabilities.
-
-But there's a more practical question:
-
-> **Can it reliably modify a real codebase over time?**
-
-Software is deterministic. Large Language Models are probabilistic.
-
-Farmon's goal is to bridge these two worlds by combining the reasoning ability of LLMs with deterministic software operations.
-
-Today's AI coding tools often generate entire files or even complete projects in a single step. While this is impressive, the result can quickly become a black box—code that works, but is difficult to understand, review, debug, or evolve.
-
-Farmon takes a different approach.
-
-Instead of asking an LLM to generate an entire application, every request is decomposed into a sequence of small, deterministic mutation tasks. Each task performs one well-defined change to the existing codebase.
-
-This keeps AI-generated software transparent rather than opaque. Every change can be inspected, reviewed, tested, undone, and reproduced.
-
-The LLM decides **what** should change.
-
-Farmon decides **how** that change is applied safely and consistently.
-
----
-
 ## Features
 
 - 🤖 Natural language code editing

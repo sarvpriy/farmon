@@ -1,6 +1,7 @@
 import { injectFarmonMetadata } from "../execute/helpers/injector.js";
 import { parse } from "@babel/parser";
 import { generate } from "@babel/generator";
+import path from "path";
 
 export function farmonVitePlugin() {
   return {
@@ -10,7 +11,6 @@ export function farmonVitePlugin() {
       if (!id.endsWith(".jsx") && !id.endsWith(".tsx")) {
         return code;
       }
-      //   console.log(`farmon-vite-plugin: ${id}`);
       const ast = parse(code, {
         sourceType: "module",
         plugins: ["jsx", "typescript"],
@@ -18,10 +18,9 @@ export function farmonVitePlugin() {
 
       injectFarmonMetadata({
         ast,
-        filePath: id,
+        filePath: path.relative(`${process.cwd()}`, id),
       });
       const output = generate(ast).code;
-      //   console.log(`Transformed code for ${id}`);
       return output;
     },
   };
