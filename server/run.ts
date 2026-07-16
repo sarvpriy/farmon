@@ -102,7 +102,7 @@ const appContext: AppContext = await createAppContext({ projectRoot });
 
 // console.log("App context...", appContext);
 
-const uiRoot = path.join(appContext.loomaRoot, "ui");
+const uiRoot = path.join(appContext.farmonRoot, "ui");
 
 if (process.env.NODE_ENV === "development") {
   const vite = await createViteServer({
@@ -331,6 +331,6 @@ app.get("/health", async (req, res) => {
 
 app.listen(appContext.config.serverPort, () => {
   console.log(
-    `Farmon server running on http://localhost:${appContext.config.serverPort}`
+    `Farmon server running on http://localhost:${appContext.config.serverPort}`,
   );
 });

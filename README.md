@@ -24,6 +24,7 @@ Unlike chat-based assistants that generate code snippets, Farmon analyzes your p
 
 - Node.js 22+
 - LLM API details (local or remote)
+- **Currently supported:** React (JSX) applications built with Vite.
 
 ---
 
@@ -35,29 +36,30 @@ Install Farmon:
 npm install --save-dev farmon
 ```
 
-Create farmon.config.js
+## Quick Start
 
-```js
-/** @type {import("farmon").FarmonConfig} */
-export default {
-  llm: {
-    provider: "openai-compatible", // "openai-compatible" | "ollama"
-    baseUrl: "http://localhost:1234/v1", // <api-url>
-    model: "qwen3.5-9b", // <model-name>
-  },
-  appUrl: "http://localhost:5173", // user's app url
-  serverPort: 3001, // farmon server will run on this port
-  uiPort: 5174, // farmon chat box will run on this port
+Initialize Farmon:
 
-  componentsDirectory: "src", // your component's directory
+```bash
+farmon init
+# or
+npx farmon init
+```
 
-  componentStructure: [".jsx", ".css", "index.ts"], // your project's component tructure
+This command will:
 
-  componentIdAttribute: "data-farmon-id", // this is for component selection system
-  selection: {
-    hoverColor: "#3b82f6",
-  },
-};
+- create `farmon.config.js`
+- create the `.farmon` workspace
+- add `.farmon` to `.gitignore`
+
+**Add farmonVitePlugin:** in `vite.config.js`. make sure to add farmonVitePlugin before react
+
+```ts
+import { farmonVitePlugin } from "farmon/vite";
+
+export default defineConfig({
+  plugins: [farmonVitePlugin(), react()], // make sure to add farmonVitePlugin before react
+});
 ```
 
 Start the Farmon server:

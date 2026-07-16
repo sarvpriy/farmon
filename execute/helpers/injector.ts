@@ -63,7 +63,7 @@ function getRootJSX(node) {
 }
 
 function injectIntoRootElement(jsx, componentName, filePath) {
-  console.log(`Injecting into root JSX element of ${componentName}`, jsx);
+  // console.log(`Injecting into root JSX element of ${componentName}`, jsx);
   const attrs = jsx.openingElement.attributes;
 
   addAttribute(attrs, "data-farmon-id", `${filePath}::${componentName}`);
@@ -77,13 +77,13 @@ function addAttribute(attributes, name, value) {
     (attr) =>
       t.isJSXAttribute(attr) &&
       t.isJSXIdentifier(attr.name) &&
-      attr.name.name === name
+      attr.name.name === name,
   );
 
   if (exists) return;
 
   attributes.push(
-    t.jsxAttribute(t.jsxIdentifier(name), t.stringLiteral(value))
+    t.jsxAttribute(t.jsxIdentifier(name), t.stringLiteral(value)),
   );
 }
 

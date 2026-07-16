@@ -122,7 +122,7 @@ export interface AppContext {
     trashDir: string;
     logsDir: string;
   };
-  loomaRoot: string;
+  farmonRoot: string;
 
   componentRegistry: ComponentRegistry;
 

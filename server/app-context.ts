@@ -124,7 +124,7 @@ export async function createAppContext({ projectRoot }): Promise<AppContext> {
     });
   //   console.log(projectDependencies);
 
-  const loomaRoot =
+  const farmonRoot =
     process.env.NODE_ENV === "development"
       ? path.resolve(import.meta.dirname, "..")
       : path.resolve(import.meta.dirname, "..");
@@ -132,15 +132,15 @@ export async function createAppContext({ projectRoot }): Promise<AppContext> {
     project: {
       root: path.resolve(projectRoot),
       undoPath: path.resolve(
-        path.join(projectRoot, ".looma", "history", "undo.json"),
+        path.join(projectRoot, ".farmon", "history", "undo.json"),
       ),
       redoPath: path.resolve(
-        path.join(projectRoot, ".looma", "history", "redo.json"),
+        path.join(projectRoot, ".farmon", "history", "redo.json"),
       ),
-      trashDir: path.resolve(path.join(projectRoot, ".looma", "trash")),
-      logsDir: path.resolve(path.join(projectRoot, ".looma", "logs")),
+      trashDir: path.resolve(path.join(projectRoot, ".farmon", "trash")),
+      logsDir: path.resolve(path.join(projectRoot, ".farmon", "logs")),
     },
-    loomaRoot,
+    farmonRoot,
     config,
     componentRegistry,
     projectDependencies,
