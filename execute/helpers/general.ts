@@ -32,10 +32,11 @@ import path from "path";
 import traverse from "@babel/traverse";
 import { parse } from "@babel/parser";
 import { generate } from "@babel/generator";
-import t from "@babel/types";
+import t, { Node } from "@babel/types";
 import postcss from "postcss";
 
 import sse from "../../server/sse.js";
+import parser from "./parsers.js";
 
 import crypto from "crypto";
 import { createSyncFn } from "synckit";
@@ -2607,7 +2608,7 @@ function resolveStyleDependencies({
   if (!fs.existsSync(absoluteCssPath)) {
     throw new LoomaError(
       ERROR_CODES.FILE_NOT_FOUND,
-      `CSS file does not exist: ${absoluteCssPath}`
+      `CSS file does not exist: ${absoluteCssPath}`,
     );
   }
 
@@ -2661,7 +2662,7 @@ function resolveStyleDependencies({
     const variablesFile = (availableDependencyFiles as string[]).find(
       (file) => {
         return file.includes("variables.css");
-      }
+      },
     );
 
     // --------------------------------------------------------
@@ -2682,7 +2683,7 @@ function resolveStyleDependencies({
 
         const relativeImportPath = path.relative(
           path.dirname(absoluteCssPath),
-          variablesFile
+          variablesFile,
         );
 
         // ----------------------------------------------------
@@ -2740,7 +2741,7 @@ function resolveStyleDependencies({
     const animationsFile = (availableDependencyFiles as string[]).find(
       (file) => {
         return file.includes("animations.css");
-      }
+      },
     );
 
     // --------------------------------------------------------
@@ -2761,7 +2762,7 @@ function resolveStyleDependencies({
 
         const relativeImportPath = path.relative(
           path.dirname(absoluteCssPath),
-          animationsFile
+          animationsFile,
         );
 
         // ----------------------------------------------------
@@ -3016,7 +3017,7 @@ function matchesSelector({ openingElement, selector }) {
       .filter(Boolean);
 
     const hasAllClasses = classes.every((className) =>
-      classNames.includes(className)
+      classNames.includes(className),
     );
 
     if (!hasAllClasses) {
@@ -3171,12 +3172,12 @@ async function generateTasksDocs() {
 function formatCode(code: string) {
   try {
     return createSyncFn(
-      path.join(getInitializationContext().workersDir, "prettier.js")
+      path.join(getInitializationContext().workersDir, "prettier.js"),
     )(code);
   } catch (error) {
     throw new LoomaError(
       ERROR_CODES.VALIDATION_FAILED,
-      `Syntax validation failed:\n${error.message}`
+      `Syntax validation failed:\n${error.message}`,
     );
   }
 }
@@ -3239,7 +3240,7 @@ function resolveTaskReferences({
 
   if (Array.isArray(value)) {
     return value.map((item) =>
-      resolveTaskReferences({ value: item, taskOutputs })
+      resolveTaskReferences({ value: item, taskOutputs }),
     );
   }
 
@@ -3285,7 +3286,7 @@ function resolveTaskReferences({
           {
             taskOutputs,
             source,
-          }
+          },
         );
       }
 
@@ -3313,7 +3314,7 @@ function resolveTaskReferences({
             `Unable to resolve path "${path}" from task "${source}"`,
             {
               task: resolveTaskReferences.name,
-            }
+            },
           );
         }
 
@@ -3337,7 +3338,7 @@ function resolveTaskReferences({
       Object.entries(value).map(([key, val]) => [
         key,
         resolveTaskReferences({ value: val, taskOutputs }),
-      ])
+      ]),
     );
   }
 
@@ -3615,7 +3616,7 @@ function createComponentRegistry({
 
       const code = fs.readFileSync(
         path.join(currentDirectory, entry.name),
-        "utf8"
+        "utf8",
       );
 
       // --------------------------------------------------------
@@ -3849,7 +3850,7 @@ function createComponentRegistry({
           // --------------------------------------------------
 
           const childComponent: any = Object.values(registry).find(
-            (entry: any) => entry.componentName === childName
+            (entry: any) => entry.componentName === childName,
           );
 
           if (!childComponent) {
@@ -3877,6 +3878,493 @@ function createComponentRegistry({
   // ----------------------------------------------------------
 
   return { ...registry } as ComponentRegistry;
+}
+
+function createComponentIndex({
+  componentsPath,
+  projectRoot,
+  registry = {},
+}: {
+  componentsPath: string;
+  projectRoot: string;
+  registry?: object;
+}): ComponentRegistry {
+  /**
+   * ----------------------------------------------------------
+   * INTERNAL RECURSIVE DIRECTORY WALKER
+   * ----------------------------------------------------------
+   */
+
+  function walkDirectory(currentDirectory) {
+    // --------------------------------------------------------
+    // Read all files/folders inside current directory
+    // --------------------------------------------------------
+
+    const entries = fs.readdirSync(currentDirectory, {
+      withFileTypes: true,
+    });
+
+    // --------------------------------------------------------
+    // Process every directory entry
+    // --------------------------------------------------------
+
+    for (const entry of entries) {
+      // ------------------------------------------------------
+      // Build absolute path
+      // ------------------------------------------------------
+
+      const absoluteEntryPath = path.join(currentDirectory, entry.name);
+
+      // ------------------------------------------------------
+      // Build project-relative path
+      // ------------------------------------------------------
+
+      // const relativeEntryPath = path.relative(projectRoot, absoluteEntryPath);
+
+      // ------------------------------------------------------
+      // RECURSIVE DIRECTORY HANDLING
+      // ------------------------------------------------------
+
+      if (entry.isDirectory()) {
+        // ----------------------------------------------------
+        // Continue recursive crawl
+        // ----------------------------------------------------
+
+        walkDirectory(absoluteEntryPath);
+
+        // ----------------------------------------------------
+        // Move to next entry
+        // ----------------------------------------------------
+
+        continue;
+      }
+
+      // ------------------------------------------------------
+      // Skip non JSX/TSX files
+      // ------------------------------------------------------
+
+      const isComponentFile =
+        entry.name.endsWith(".jsx") || entry.name.endsWith(".tsx");
+
+      if (!isComponentFile) {
+        continue;
+      }
+
+      // ------------------------------------------------------
+      // Extract component name
+      // ------------------------------------------------------
+
+      const componentRegistry = indexFile(absoluteEntryPath, projectRoot);
+
+      registry = { ...registry, ...componentRegistry };
+
+      // const componentType = path.extname(entry.name);
+      // const componentName = path.basename(entry.name, componentType);
+
+      // // ------------------------------------------------------
+      // // Build component id
+      // // ------------------------------------------------------
+
+      // const componentId = `cmp_${componentName.toLowerCase()}`;
+
+      // // --------------------------------------------------------
+      // // Read component source code
+      // // --------------------------------------------------------
+
+      // const code = fs.readFileSync(
+      //   path.join(currentDirectory, entry.name),
+      //   "utf8",
+      // );
+
+      // // --------------------------------------------------------
+      // // Parse AST
+      // // --------------------------------------------------------
+
+      // const ast = parse(code, {
+      //   sourceType: "module",
+      //   plugins: [componentType === ".tsx" ? "typescript" : "jsx"],
+      // });
+
+      // // --------------------------------------------------------
+      // // Default metadata values
+      // // --------------------------------------------------------
+
+      // let exported = false;
+
+      // let props = [];
+
+      // let rootElement = null;
+
+      // const childComponents = [];
+
+      // --------------------------------------------------------
+      // Traverse AST
+      // --------------------------------------------------------
+
+      // traverse.default(ast, {
+      //   // ------------------------------------------------------
+      //   // Detect exported component
+      //   // ------------------------------------------------------
+
+      //   ExportDefaultDeclaration(path) {
+      //     exported = true;
+      //   },
+
+      //   // ------------------------------------------------------
+      //   // Detect component declaration
+      //   // ------------------------------------------------------
+
+      //   FunctionDeclaration(path) {
+      //     // ----------------------------------------------------
+      //     // Ignore unrelated functions
+      //     // ----------------------------------------------------
+
+      //     if (path.node.id.name !== componentName) {
+      //       return;
+      //     }
+
+      //     // ----------------------------------------------------
+      //     // Extract props
+      //     // ----------------------------------------------------
+
+      //     const firstParam = path.node.params[0];
+
+      //     // ----------------------------------------------------
+      //     // props object destructuring
+      //     //
+      //     // function Header({
+      //     //   title,
+      //     //   logo
+      //     // })
+      //     // ----------------------------------------------------
+
+      //     if (t.isObjectPattern(firstParam)) {
+      //       firstParam.properties.forEach((property) => {
+      //         if (t.isObjectProperty(property)) {
+      //           if (t.isIdentifier(property.key)) {
+      //             props.push(property.key.name);
+      //           }
+      //         }
+      //       });
+      //     }
+
+      //     // ----------------------------------------------------
+      //     // plain props object
+      //     //
+      //     // function Header(props)
+      //     // ----------------------------------------------------
+
+      //     if (t.isIdentifier(firstParam)) {
+      //       props.push(firstParam.name);
+      //     }
+      //   },
+
+      //   // ------------------------------------------------------
+      //   // Detect JSX root element
+      //   // ------------------------------------------------------
+
+      //   ReturnStatement(path) {
+      //     // ----------------------------------------------------
+      //     // Only inspect JSX returns
+      //     // ----------------------------------------------------
+
+      //     if (!t.isJSXElement(path.node.argument)) {
+      //       return;
+      //     }
+
+      //     const openingElement = path.node.argument.openingElement;
+
+      //     // ----------------------------------------------------
+      //     // Extract root element name
+      //     //
+      //     // Example:
+      //     //
+      //     // <header>
+      //     // ----------------------------------------------------
+
+      //     if (t.isJSXIdentifier(openingElement.name)) {
+      //       rootElement = openingElement.name.name;
+      //     }
+      //   },
+
+      //   // ------------------------------------------------------
+      //   // Detect child component usage
+      //   // ------------------------------------------------------
+
+      //   JSXOpeningElement(path) {
+      //     // ----------------------------------------------------
+      //     // Ignore html tags
+      //     // ----------------------------------------------------
+
+      //     if (!t.isJSXIdentifier(path.node.name)) {
+      //       return;
+      //     }
+
+      //     const tagName = path.node.name.name;
+
+      //     // ----------------------------------------------------
+      //     // React component names start uppercase
+      //     // ----------------------------------------------------
+
+      //     const isReactComponent = /^[A-Z]/.test(tagName);
+
+      //     if (!isReactComponent) {
+      //       return;
+      //     }
+
+      //     // ----------------------------------------------------
+      //     // Ignore self-reference
+      //     // ----------------------------------------------------
+
+      //     if (tagName === componentName) {
+      //       return;
+      //     }
+
+      //     // ----------------------------------------------------
+      //     // Prevent duplicates
+      //     // ----------------------------------------------------
+
+      //     if (!childComponents.includes(tagName)) {
+      //       childComponents.push(tagName);
+      //     }
+      //   },
+      // });
+
+      // ------------------------------------------------------
+      // Detect CSS file
+      // ------------------------------------------------------
+
+      // const cssCandidates = [
+      //   `${componentName}.css`,
+      //   `${componentName}.module.css`,
+      // ];
+
+      // ------------------------------------------------------
+      // Try finding matching CSS file
+      // ------------------------------------------------------
+
+      // let cssPath = null;
+
+      // for (const cssFileName of cssCandidates) {
+      //   // ----------------------------------------------------
+      //   // Build candidate CSS path
+      //   // ----------------------------------------------------
+
+      //   const absoluteCssPath = path.join(currentDirectory, cssFileName);
+
+      //   // ----------------------------------------------------
+      //   // Check if CSS file exists
+      //   // ----------------------------------------------------
+
+      //   if (fs.existsSync(absoluteCssPath)) {
+      //     // --------------------------------------------------
+      //     // Store project-relative css path
+      //     // --------------------------------------------------
+
+      //     cssPath = path.relative(projectRoot, absoluteCssPath);
+
+      //     break;
+      //   }
+      // }
+
+      // ------------------------------------------------------
+      // Create registry entry
+      // ------------------------------------------------------
+
+      // registry[componentId] = {
+      //   componentId,
+
+      //   componentName,
+
+      //   filePath: relativeEntryPath,
+
+      //   cssPath: fs.existsSync(cssPath) ? cssPath : null,
+
+      //   importPath: relativeEntryPath,
+
+      //   parentComponent: null,
+
+      //   childComponents,
+
+      //   exported,
+
+      //   props,
+
+      //   rootElement,
+
+      //   lastUpdated: Date.now(),
+      // };
+
+      // ----------------------------------------------------------
+      // STEP 5:
+      // Resolve parent-child relationships
+      // ----------------------------------------------------------
+
+      // Object.values(registry).forEach((component: any) => {
+      //   component.childComponents.forEach((childName) => {
+      //     // --------------------------------------------------
+      //     // Find matching child component
+      //     // --------------------------------------------------
+
+      //     const childComponent: any = Object.values(registry).find(
+      //       (entry: any) => entry.componentName === childName,
+      //     );
+
+      //     if (!childComponent) {
+      //       return;
+      //     }
+
+      //     // --------------------------------------------------
+      //     // Assign parent relationship
+      //     // --------------------------------------------------
+
+      //     childComponent.parentComponent = component.componentName;
+      //   });
+      // });
+    }
+  }
+
+  // ----------------------------------------------------------
+  // Start recursive crawling
+  // ----------------------------------------------------------
+
+  walkDirectory(componentsPath);
+
+  // ----------------------------------------------------------
+  // Return final registry
+  // ----------------------------------------------------------
+
+  return { ...registry } as ComponentRegistry;
+}
+
+function indexFile(filePath: string, projectRoot: string) {
+  // ----------------------------------------------------------
+  // STEP 1:
+  // Read the source file.
+  // ----------------------------------------------------------
+
+  const source = fs.readFileSync(filePath, "utf8");
+
+  // ----------------------------------------------------------
+  // STEP 2:
+  // Parse the file into a Babel AST.
+  // ----------------------------------------------------------
+
+  const ast = parser.parseAST({ code: source }) as Node;
+
+  // ----------------------------------------------------------
+  // STEP 3:
+  // Create an empty registry for this file.
+  // ----------------------------------------------------------
+
+  const registry = {};
+
+  // ----------------------------------------------------------
+  // STEP 4:
+  // Traverse every node in the AST.
+  // ----------------------------------------------------------
+
+  const relativeEntryPath = path.relative(projectRoot, filePath);
+
+  traverse.default(ast, {
+    // ------------------------------------------------------
+    // Function Component
+    //
+    // function Header() {}
+    // ------------------------------------------------------
+
+    FunctionDeclaration(pathNode) {
+      const name = pathNode.node.id?.name;
+
+      if (!name) return;
+
+      const id = `${relativeEntryPath}::${name}`;
+
+      registry[id] = {
+        id,
+        componentName: name,
+        filePath: relativeEntryPath,
+        exported: false,
+        startLine: pathNode.node.loc.start.line,
+        endLine: pathNode.node.loc.end.line,
+        type: "FunctionDeclaration",
+      };
+    },
+
+    // ------------------------------------------------------
+    // Arrow Components
+    //
+    // const Header = () => {}
+    //
+    // const Header = function () {}
+    // ------------------------------------------------------
+
+    VariableDeclarator(pathNode) {
+      if (!t.isIdentifier(pathNode.node.id)) return;
+
+      const init = pathNode.node.init;
+
+      if (!t.isArrowFunctionExpression(init) && !t.isFunctionExpression(init)) {
+        return;
+      }
+
+      const name = pathNode.node.id.name;
+
+      const id = `${relativeEntryPath}::${name}`;
+
+      registry[id] = {
+        id,
+        componentName: name,
+        filePath: relativeEntryPath,
+        exported: false,
+        startLine: pathNode.node.loc.start.line,
+        endLine: pathNode.node.loc.end.line,
+        type: init.type,
+      };
+    },
+
+    // ------------------------------------------------------
+    // Mark exported components.
+    // ------------------------------------------------------
+
+    ExportNamedDeclaration(pathNode) {
+      const decl = pathNode.node.declaration;
+
+      if (t.isFunctionDeclaration(decl) && decl.id) {
+        const id = `${relativeEntryPath}::${decl.id.name}`;
+
+        if (registry[id]) {
+          registry[id].exported = true;
+        }
+      }
+    },
+
+    ExportDefaultDeclaration(pathNode) {
+      const decl = pathNode.node.declaration;
+
+      // export default function HomePage() {}
+      if (t.isFunctionDeclaration(decl) && decl.id) {
+        const id = `${relativeEntryPath}::${decl.id.name}`;
+
+        if (registry[id]) {
+          registry[id].exported = true;
+        }
+
+        return;
+      }
+
+      // export default HomePage;
+      if (t.isIdentifier(decl)) {
+        const id = `${relativeEntryPath}::${decl.name}`;
+
+        if (registry[id]) {
+          registry[id].exported = true;
+        }
+      }
+    },
+  });
+
+  return registry;
 }
 
 /**
@@ -3968,7 +4456,7 @@ function getProjectDependencies({
   if (!fs.existsSync(packageJsonPath)) {
     throw new LoomaError(
       ERROR_CODES.FILE_NOT_FOUND,
-      `package.json not found at: ${packageJsonPath}`
+      `package.json not found at: ${packageJsonPath}`,
     );
   }
 
@@ -3991,7 +4479,7 @@ function getProjectDependencies({
   } catch (error) {
     throw new LoomaError(
       ERROR_CODES.INTERNAL_ERROR,
-      `Invalid package.json format`
+      `Invalid package.json format`,
     );
   }
 
@@ -4426,4 +4914,7 @@ export default {
   formatObjectCode,
   readFile,
   writeFile,
+
+  indexFile,
+  createComponentIndex,
 };

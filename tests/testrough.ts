@@ -7,25 +7,25 @@ import traverse from "@babel/traverse";
 import generate from "@babel/generator";
 import t from "@babel/types";
 
-import { ast, mutations, helpers, generators } from "@/execute/tasks/index.ts";
-import utils from "@/execute/helpers/general.ts";
-import history from "@/execute/history/history-manager.ts";
-import rollbackHandlers from "@/execute/history/rollback-handlers.ts";
+import { ast, mutations, helpers, generators } from "../execute/tasks/index.ts";
+import generalHelpers from "../execute/helpers/general.ts";
+import history from "../execute/history/history-manager.ts";
+import rollbackHandlers from "../execute/history/rollback-handlers.ts";
 
-import parsers from "@/execute/helpers/parsers.ts";
+import parsers from "../execute/helpers/parsers.ts";
 
-import {
-  PROJECT_SRC,
-  ROOT_DIR,
-  OPERATION_LOG_PATH,
-} from "@/looma-internal-configs.ts";
+// import {
+//   PROJECT_SRC,
+//   ROOT_DIR,
+//   OPERATION_LOG_PATH,
+// } from "@/looma-internal-configs.ts";
 
 import {
   plannerResponseSchema,
   jsxResponseSchema,
   cssResponseSchema,
   componentResponseSchema,
-} from "@/schemas/index.ts";
+} from "../schemas/index.ts";
 
 /*
 - clear the project
@@ -46,15 +46,15 @@ add a sub footer below it
 
 add a call to action above this footer
 */
-import {
-  clearIt,
-  makeAHeader,
-  makeHeader,
-  removeStarterCode,
-  goldenAction,
-} from "@/tests/actions/index.ts";
+// import {
+//   clearIt,
+//   makeAHeader,
+//   makeHeader,
+//   removeStarterCode,
+//   goldenAction,
+// } from "./tests/actions/index.ts";
 
-import execute from "@/execute/index.ts";
+import execute from "../execute/index.ts";
 import z from "zod";
 
 // src/globals.ts
@@ -913,7 +913,7 @@ async function testMutationTasks() {
           task: keyof typeof helpersTaskDetails;
           payload: unknown;
           taskOutputs: object;
-        }
+        },
       );
 
       console.log("Execution Result:");
@@ -1115,7 +1115,7 @@ async function testHelpersTasks({ helpersTaskDetails, execute }) {
 // askQuestion();
 
 (async function () {
-  // console.log(await utils.getExportedFunctionNames("generators"));
+  // console.log(await generalHelpers.getExportedFunctionNames("generators"));
   // function issuesToMessages(issues: Array<{ message: string }>): string[] {
   //   return issues.map((i) => i.message);
   // }
@@ -1165,19 +1165,25 @@ async function testHelpersTasks({ helpersTaskDetails, execute }) {
   //   helpersTaskDetails,
   //   execute: execute.executeTask,
   // });
-  // console.log(await utils.generateTasksDocs());
+  // console.log(await generalHelpers.generateTasksDocs());
   // const module = await import("../lib/tasks/ast.ts");
   // console.log(Object.keys(module.default));
-  // console.log(utils.generateTasksDocs("./lib/tasks/generators.ts"));
-  // console.log(utils.generateTasksDocs("./lib/tasks/helpers.ts"));
-  // console.log(utils.generateTasksDocs("./lib/tasks/mutations.ts"));
-  // console.log(utils.generateTasksDocs("./lib/tasks/ast.ts"));
-  // console.log(utils.getExportedFunctionNames("./lib/tasks/mutations.ts"));
+  // console.log(generalHelpers.generateTasksDocs("./lib/tasks/generators.ts"));
+  // console.log(generalHelpers.generateTasksDocs("./lib/tasks/helpers.ts"));
+  // console.log(generalHelpers.generateTasksDocs("./lib/tasks/mutations.ts"));
+  // console.log(generalHelpers.generateTasksDocs("./lib/tasks/ast.ts"));
+  // console.log(generalHelpers.getExportedFunctionNames("./lib/tasks/mutations.ts"));
+  console.log(
+    generalHelpers.createComponentIndex({
+      componentsPath: path.join(process.cwd(), "playground/react-vite/src"),
+      projectRoot: path.join(process.cwd(), "playground/react-vite"),
+    }),
+  );
 })();
 
 function testUtilFunction() {
   console.log(
-    utils.resolveTaskReferences({
+    generalHelpers.resolveTaskReferences({
       value: {
         cssPath: {
           $ref: {
@@ -1210,7 +1216,7 @@ function testUtilFunction() {
             "#root {\n  max-width: 1920px;\n  margin: 0 auto;\n  padding: 2rem;\n  text-align: center;\n}\n\n.logo {\n  height: 6em;\n  padding: 1.5em;\n  will-change: filter;\n  transition: filter 300ms;\n}\n.logo:hover {\n  filter: drop-shadow(0 0 2em #646cffaa);\n}\n.logo.react:hover {\n  filter: drop-shadow(0 0 2em #61dafbaa);\n}\n\n@keyframes logo-spin {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  a:nth-of-type(2) .logo {\n    animation: logo-spin infinite 20s linear;\n  }\n}\n\n.card {\n  padding: 2em;\n}\n\n.read-the-docs {\n  color: #888;\n}\n\nmain {\n  background-color: #2ecc71;\n}\n",
         },
       },
-    })
+    }),
   );
 
   const componentCode = `
@@ -1810,12 +1816,12 @@ async function runActions() {
   const action = makeHeader;
 
   let taskOutputs = [];
-  const componentRegistry = utils.createComponentRegistry({
+  const componentRegistry = generalHelpers.createComponentRegistry({
     componentsPath: `${PROJECT_SRC}/components`,
     registry: {},
   });
 
-  const projectDependencies = utils.getProjectDependencies({
+  const projectDependencies = generalHelpers.getProjectDependencies({
     projectRoot: ROOT_DIR,
   });
 

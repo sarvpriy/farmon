@@ -1,7 +1,7 @@
 import fs from "fs";
 import traverse from "@babel/traverse";
 import { parse } from "@babel/parser";
-import t from "@babel/types";
+import t, { Node } from "@babel/types";
 import postcss from "postcss";
 
 import { ERROR_CODES } from "../../schemas/index.js";
@@ -200,7 +200,7 @@ function parseAST({ code }: TaskPayload<"parseAST">): TaskReturn<"parseAST"> {
     return parse(code, {
       sourceType: "module",
       plugins: ["jsx", "typescript"],
-    });
+    }) as Node;
   } catch (error) {
     throw new LoomaError(
       ERROR_CODES.PARSE_ERROR,

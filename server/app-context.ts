@@ -112,11 +112,11 @@ export async function createAppContext({ projectRoot }): Promise<AppContext> {
     projectRoot,
   });
 
-  const componentRegistry: ComponentRegistry = helpers.createComponentRegistry({
+  const componentRegistry: ComponentRegistry = helpers.createComponentIndex({
     componentsPath: path.join(projectRoot, config.componentsDirectory),
     projectRoot,
   });
-  //   console.log(componentRegistry);
+  console.log(componentRegistry);
 
   const projectDependencies: ProjectDependencies =
     helpers.getProjectDependencies({

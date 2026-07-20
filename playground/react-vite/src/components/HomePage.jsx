@@ -258,7 +258,7 @@ function Footer() {
 }
 
 // ---------- Home Page ----------
-export default function HomePage() {
+function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -269,3 +269,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+export default HomePage;

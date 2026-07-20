@@ -783,7 +783,7 @@ export const MutationTaskRegistry = {
     description: "Creates a new file in an existing directory.",
     payload: z.object({
       filePath: z.string(),
-      content: z.string(),
+      content: z.nullable(z.string()),
     }),
 
     return: z.object({ success: z.boolean(), filePath: z.string() }),
